@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { instance } from 'api-heroku/instance';
 
+//frankfrank@mail.com
+
 export const registerThunk = createAsyncThunk(
   'auth/register',
   //в первый параметр credentials придет body (информация из компонента), данные пользователя для регистрации/авторизации
