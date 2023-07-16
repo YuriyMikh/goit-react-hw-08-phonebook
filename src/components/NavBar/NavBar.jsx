@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { logoutThunk } from 'redux/auth/operations';
 import { selectLoggedIn, selectUser } from 'redux/auth/selectors';
+import { StyledHeader, StyledNav } from './NavBar.styled';
 
 export const NavBar = () => {
   const navigate = useNavigate(); //подтягиваем данный хук, чтобы организовать переход по страницам (например кнопка Register)
@@ -11,19 +12,11 @@ export const NavBar = () => {
   const user = useSelector(selectUser); //получаем значение из user которое хранится в state
 
   return (
-    <header
-      style={{
-        display: 'flex',
-        backgroundColor: 'lightgrey',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '6px 12px',
-      }}
-    >
-      <nav style={{ display: 'flex', gap: '12px' }}>
+    <StyledHeader>
+      <StyledNav>
         <NavLink to="/">Home</NavLink>
         <NavLink to="/contacts">Contacts</NavLink>
-      </nav>
+      </StyledNav>
 
       <div>{isLoggedIn && <h3>hello, {user.name}</h3>}</div>
 
@@ -49,6 +42,6 @@ export const NavBar = () => {
           </button>
         )}
       </div>
-    </header>
+    </StyledHeader>
   );
 };

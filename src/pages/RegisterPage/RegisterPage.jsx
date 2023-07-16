@@ -54,7 +54,9 @@ export const RegisterPage = () => {
           padding: '20px 6px',
         }}
       >
-        <label style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+        <label
+          style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}
+        >
           Name
           <input
             style={{ padding: '5px' }}
