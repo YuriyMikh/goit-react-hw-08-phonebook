@@ -1,5 +1,10 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { loginThunk, logoutThunk, registerThunk } from './operations';
+import {
+  loginThunk,
+  logoutThunk,
+  refreshThunk,
+  registerThunk,
+} from './operations';
 
 //выносим наверх функцию-шаблон, которую будем передавать в extraReducers в addMatcher(isAnyOf())
 const pending = (state, action) => {
@@ -22,6 +27,7 @@ const initialState = {
   error: null,
   loading: false,
   isLoggedIn: false,
+  isRefreshing: false,
 };
 
 const authSlice = createSlice({
@@ -49,6 +55,17 @@ const authSlice = createSlice({
         state.token = ''; //очищаем токен
         state.isLoggedIn = false;
         state.loading = false;
+      })
+      .addCase(refreshThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isLoggedIn = true;
+        state.isRefreshing = false; //если зарефрешились - переводим на false
+      })
+      .addCase(refreshThunk.pending, (state, action) => {
+        state.isRefreshing = true;
+      })
+      .addCase(refreshThunk.rejected, (state, action) => {
+        state.isRefreshing = false;
       })
 
       //кейс для обработки повторяющихся действий: pending и rejected. Ксли пишем именно через isAnyOf() - указываем какие именно thunk подкинуты к этому мэтчеру

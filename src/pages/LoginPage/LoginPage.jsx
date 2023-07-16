@@ -1,9 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { loginThunk } from 'redux/auth/operations';
+import { selectLoggedIn } from 'redux/auth/selectors';
 
 export const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -12,8 +13,9 @@ export const LoginPage = () => {
   });
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation;
+  const location = useLocation();
+  const isLoggedIn = useSelector(selectLoggedIn);
+  // console.log(location);
 
   //вариант с деструктуризацией:
   const handleChangeInput = ({ target }) => {
@@ -32,13 +34,18 @@ export const LoginPage = () => {
   const handleSubmit = e => {
     e.preventDefault();
     dispatch(loginThunk(credentials)) //при клике на Login вызываю и обрабатываю loginThunk
-      .unwrap() ////при успешном выполнении предыщей операции тут же вызываю следующую
+      .unwrap() //при успешном выполнении предыщей операции тут же вызываю следующую
       .then(() => {
         toast.success('Welcome back :)');
-        //перебрасываем пользователя на маршрут из хука useLocation. D файле App.jsx страницу <PageContacts/> нужно обернуть в приватный роутер, иначе работать не будет
-        navigate(location.state?.from ?? '/'); //если страниц а открыта в новом окне. Нужна проверка. Если нет state (если у нас нет from), тогда отправляем пользователя на стартовую страницу
       });
   };
+
+  //перебрасываем пользователя на маршрут из хука useLocation.
+  //***??? */ В файле App.jsx страницу < PageContacts /> нужно обернуть в приватный роутер, иначе работать не будет
+  if (isLoggedIn) {
+    return <Navigate to={location.state?.from ?? '/'} />;
+  }
+  //***??? */ navigate(location.state?.from ?? '/'); //если страница открыта в новом окне. Нужна проверка. Если нет state (если у нас нет from), тогда отправляем пользователя на стартовую страницу
 
   return (
     <div

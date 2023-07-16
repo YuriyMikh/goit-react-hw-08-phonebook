@@ -13,7 +13,7 @@ export const Homepage = () => {
           color: '#010101',
         }}
       >
-        Contact manager welcome page (This is Homepage)
+        Contact manager welcome page :)
       </h1>
     </div>
   );
