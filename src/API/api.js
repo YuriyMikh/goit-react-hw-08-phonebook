@@ -18,3 +18,4 @@ export const addContact = async contact => {
 export const deleteContact = id => {
   return contactsApi.delete(`/contacts/${id}`);
 };
+

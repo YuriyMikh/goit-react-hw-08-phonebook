@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { registerThunk } from 'redux/auth/operations';
 
 export const RegisterPage = () => {
@@ -12,6 +12,7 @@ export const RegisterPage = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //вариант с деструктуризацией:
   const handleChangeInput = ({ target }) => {
@@ -30,7 +31,9 @@ export const RegisterPage = () => {
   const handleSubmit = e => {
     e.preventDefault();
     console.log(credentials);
-    dispatch(registerThunk(credentials));
+    dispatch(registerThunk(credentials))
+      .unwrap()
+      .then(() => navigate('/contacts'));
   };
 
   return (

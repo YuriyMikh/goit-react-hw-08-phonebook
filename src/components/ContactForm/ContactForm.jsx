@@ -7,7 +7,7 @@ import {
   StyledInput,
   StyledLabel,
 } from './ContactForm.styled';
-import { addContactThunk } from 'redux/thunks';
+import { addContactThunk } from 'redux/contacts/operations';
 import { selectContacts } from 'redux/selectors';
 
 export const ContactForm = () => {
@@ -16,7 +16,7 @@ export const ContactForm = () => {
   //в локальном стейте будем хранить объект с именем и номером телефона контакта
   const [state, setState] = useState({
     name: '',
-    phone: '',
+    number: '',
   });
 
   const contacts = useSelector(selectContacts); //из файла contactsSlice.js (состояния Redux) вытягиваем наши контакты (из state.contacts.items)
@@ -36,7 +36,7 @@ export const ContactForm = () => {
       return;
     }
     dispatch(addContactThunk(state)); //через диспатч в файл contactsSlice.js передаем созданный объект контакта с name и phone. Далее thunk на свое место вернет объект с type и payload
-    setState({ name: '', phone: '' }); //очищаем инпуты
+    setState({ name: '', number: '' }); //очищаем инпуты
   };
 
   return (
@@ -58,8 +58,8 @@ export const ContactForm = () => {
         Number
         <StyledInput
           type="tel"
-          name="phone"
-          value={state.phone}
+          name="number"
+          value={state.number}
           onChange={handleChange}
           pattern="\+?\d{1,4}[\s]?[\-]?\(?\d{1,3}?\)?[\s]?[\-]?\d{1,4}[\s]?[\-]?\d{1,4}[\s]?[\-]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"

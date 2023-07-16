@@ -1,5 +1,5 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { loginThunk, registerThunk } from './operations';
+import { loginThunk, logoutThunk, registerThunk } from './operations';
 
 //выносим наверх функцию-шаблон, которую будем передавать в extraReducers в addMatcher(isAnyOf())
 const pending = (state, action) => {
@@ -14,7 +14,7 @@ const rejected = (state, action) => {
 };
 
 const initialState = {
-  contact: {
+  user: {
     name: '',
     email: '',
   },
@@ -28,12 +28,26 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   extraReducers: builder => {
-    //записываем действия при логинизации
     builder
-      .addCase(loginThunk.fulfilled, (state, action) => {
-        state.contact = action.payload; //команда забрать все поля из объекта contact себе в contact
-        state.token = action.payload.token; //команда записать token в state
-        state.isLoggedIn = true;
+      //записываем действия при логинизации
+      //так как обработка кейса на логин и на регистрацию одинаковые, выношу эти 2 обработки в .addMatcher(isAnyOf())
+      // .addCase(loginThunk.fulfilled, (state, action) => {
+      //   state.user = action.payload.user; //команда забрать все поля из объекта user себе в user
+      //   state.token = action.payload.token; //команда записать token в state
+      //   state.isLoggedIn = true;
+      //   state.loading = false;
+      // })
+      // //записываем действия при регистрации
+      // .addCase(registerThunk.fulfilled, (state, action) => {
+      //   state.user = action.payload.user;
+      //   state.token = action.payload.token;
+      //   state.isLoggedIn = true;
+      //   state.loading = false;
+      // })
+      .addCase(logoutThunk.fulfilled, (state, action) => {
+        state.user = { name: '', email: '' }; //вытягиваем данные не из payload, а четко указываем начальное значение контакта
+        state.token = ''; //очищаем токен
+        state.isLoggedIn = false;
         state.loading = false;
       })
 
@@ -45,6 +59,16 @@ const authSlice = createSlice({
       .addMatcher(
         isAnyOf(loginThunk.rejected, registerThunk.rejected),
         rejected //передаем функцию rejected
+      )
+      //обработка кейсов для fulfilled логинизации и регистрации
+      .addMatcher(
+        isAnyOf(loginThunk.fulfilled, registerThunk.fulfilled),
+        (state, action) => {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isLoggedIn = true;
+          state.loading = false;
+        }
       );
   },
 });

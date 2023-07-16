@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { loginThunk } from 'redux/auth/operations';
 
 export const LoginPage = () => {
@@ -11,6 +12,8 @@ export const LoginPage = () => {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation;
 
   //вариант с деструктуризацией:
   const handleChangeInput = ({ target }) => {
@@ -28,8 +31,13 @@ export const LoginPage = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(credentials);
-    dispatch(loginThunk(credentials));
+    dispatch(loginThunk(credentials)) //при клике на Login вызываю и обрабатываю loginThunk
+      .unwrap() ////при успешном выполнении предыщей операции тут же вызываю следующую
+      .then(() => {
+        toast.success('Welcome back :)');
+        //перебрасываем пользователя на маршрут из хука useLocation. D файле App.jsx страницу <PageContacts/> нужно обернуть в приватный роутер, иначе работать не будет
+        navigate(location.state?.from ?? '/'); //если страниц а открыта в новом окне. Нужна проверка. Если нет state (если у нас нет from), тогда отправляем пользователя на стартовую страницу
+      });
   };
 
   return (
@@ -50,18 +58,6 @@ export const LoginPage = () => {
           padding: '20px 6px',
         }}
       >
-        {/* <label style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          Name
-          <input
-            style={{ padding: '5px' }}
-            onChange={handleChangeInput}
-            value={credentials.name}
-            type="text"
-            name="name"
-            placeholder="enter you name..."
-          />
-        </label> */}
-
         <label style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
           Email
           <input
@@ -91,7 +87,8 @@ export const LoginPage = () => {
 
         <hr />
         <h4>
-          If you don't have an account go to <Link to="/register">Register</Link>
+          If you don't have an account go to{' '}
+          <Link to="/register">Register</Link>
         </h4>
       </form>
     </div>

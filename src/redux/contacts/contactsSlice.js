@@ -3,7 +3,8 @@ import {
   addContactThunk,
   deleteContactThunk,
   getContactsThunk,
-} from './thunks';
+} from './operations';
+import { logoutThunk } from 'redux/auth/operations';
 
 const contactsInitialState = {
   items: [],
@@ -48,8 +49,10 @@ const contactsSlice = createSlice({
       .addCase(addContactThunk.pending, state => {
         state.isLoading = true;
       })
-      .addCase(deleteContactThunk.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item.id !== action.payload);
+      .addCase(deleteContactThunk.fulfilled,
+        (state, action) => {
+        state.items = state.items
+          .filter(item => item.id !== action.payload.id);
         state.isLoading = false;
       })
       .addCase(deleteContactThunk.pending, state => {
@@ -58,6 +61,9 @@ const contactsSlice = createSlice({
       .addCase(deleteContactThunk.rejected, (state, action) => {
         state.error = action.payload;
         state.isLoading = false;
+      })
+      .addCase(logoutThunk.fulfilled, (state, action) => {
+        state.items = []; //при логауте - очищаем массив контактов, чтобы было пусто в контактах
       });
   },
 });
